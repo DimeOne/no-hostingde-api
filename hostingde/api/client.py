@@ -1,7 +1,7 @@
 import json
 import requests
 from hostingde.api.errors import ApiHttpStatusError, ApiResponseError
-from pprint import pprint
+#from pprint import pprint
 
 def getApiResponse(baseUrl, path, data):
     json_data = getApiResponseFullJson(baseUrl, path, data)
@@ -12,8 +12,8 @@ def getApiResponse(baseUrl, path, data):
 def getApiResponseFullJson(baseUrl, path, data):
     response = getApiHttpResponseOrException(baseUrl, path, data)    
     json_response = json.loads(response.content)
-    print("Called Api endpoint at {0} received following content:".format(path))
-    pprint(json_response)
+    #print("Called Api endpoint at {0} received following content:".format(path))
+    #pprint(json_response)
     return json_response
 
 def getApiHttpResponseOrException(baseUrl, path, data):
@@ -25,7 +25,7 @@ def getApiHttpResponseOrException(baseUrl, path, data):
 def getApiHttpResponse(baseUrl, path, data):
     url = baseUrl + path
     headers = {'Content-Type': 'application/json'}
-    print("Going to call Api endpoint at {0} with content:".format(path))
-    pprint(data)
+    #print("Going to call Api endpoint at {0} with content:".format(path))
+    #pprint(data)
     json_data = json.dumps(data)
     return requests.post(url, json_data, headers=headers)
