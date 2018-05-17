@@ -67,7 +67,7 @@ pip install no-hostingde-api
 ### Developer
 
 ```sh
-git clone https://github.com/DimeOne/hostingde-api.git
+git clone https://github.com/DimeOne/no-hostingde-api.git
 cd hostingde-api
 python setup.py develop
 ```
@@ -109,12 +109,16 @@ python setup.py bdist_wheel
 
 ## References
 
+- [Github Project Page]
+- [Hosting.de Provider]
 - [Hosting.de API Reference]
   - [listing-records]
   - [listing-zones]
   - [updating-zones]
 
- [Hosting.de API Reference]: https://www.hosting.de/api/
- [listing-records]: https://www.hosting.de/api/#listing-records
- [listing-zones]: https://www.hosting.de/api/#listing-zones
- [updating-zones]: https://www.hosting.de/api/#updating-zones
+[Hosting.de Provider]: https://www.hosting.de
+[Github Project Page]: https://github.com/DimeOne/no-hostingde-api
+[Hosting.de API Reference]: https://www.hosting.de/api/
+[listing-records]: https://www.hosting.de/api/#listing-records
+[listing-zones]: https://www.hosting.de/api/#listing-zones
+[updating-zones]: https://www.hosting.de/api/#updating-zones
