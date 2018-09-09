@@ -1,9 +1,9 @@
 
 
 def getZoneConfigFromZone(zone):
-    if zone['zoneConfig']['id']:
-        return { 'id': zone['zoneConfig']['id'] }
-    return { 'name': zone['zoneConfig']['name'] }
+    if zone['zoneConfig']['name']:
+        return { 'id': zone['zoneConfig']['name'] }
+    return { 'name': zone['zoneConfig']['id'] }
 
 def getZoneConfig(name=None, id=None):
     zoneConfig = {}
@@ -61,6 +61,20 @@ def getBestZoneForRecord(zones, recordName, recordType=None, recordContent=None)
             if (zoneContainsRecord(zone, recordName, recordType, recordContent)):
                 return zone
         
+        # if no exact match has been found with recordContent, iterate again,
+        # to search for a match without recordContent
+        if recordContent:
+            for zone in sortedZones:
+                if (zoneContainsRecord(zone, recordName, recordType)):
+                    return zone
+
+        # if no exact match has been found without recordContent, iterate one last time, to check for a match based on name only
+        # to search for a match without recordContent
+        if recordContent:
+            for zone in sortedZones:
+                if (zoneContainsRecord(zone, recordName)):
+                    return zone
+
         # return the deepest zone if none contains the given record
         return sortedZones[0]
 
@@ -71,18 +85,19 @@ def zoneRecordMatches(record, recordName, recordType=None, recordContent=None):
         return True
     return False
 
-def getZoneRecords(zone, recordName, recordType=None, recordContent=None):
+def zoneContainsRecord(zone, recordName, recordType=None, recordContent=None):  
+    for record in zone['records']:
+        if zoneRecordMatches(record, recordName, recordType, recordContent):
+            return True
+    return False
+
+def getMatchingRecordsFromZone(zone, recordName, recordType=None, recordContent=None):
     zoneRecords =  []
     for record in zone['records']:
         if zoneRecordMatches(record, recordName, recordType, recordContent):
             zoneRecords.append(record)
     return zoneRecords
 
-def zoneContainsRecord(zone, recordName, recordType=None, recordContent=None):  
-    for record in zone['records']:
-        if zoneRecordMatches(record, recordName, recordType, recordContent):
-            return True
-    return False
 
 def getZonesOrderedByDepth(zones):
     return sorted(zones, key=lambda x: (x['zoneConfig']['nameUnicode'].count(".")), reverse=True)
@@ -91,7 +106,7 @@ def getZoneUpdateFromZone(zone, recordName, recordType, recordContent=None, oldC
     zoneConfig = getZoneConfigFromZone(zone)
 
     # check the zone for previous records that should be deleted
-    previousRecords = getZoneRecords(zone, recordName, recordType, oldContent)
+    previousRecords = getMatchingRecordsFromZone(zone, recordName, recordType, oldContent)
     recordsToDelete = getRecordsToDeleteEntries(previousRecords)
 
     if ttl is None and len(previousRecords) > 0:
