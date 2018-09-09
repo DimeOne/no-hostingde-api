@@ -85,7 +85,7 @@ Update IPv4 IP:
 ```python
 from hostingde.api.dns import DnsApiClient
 client = DnsApiClient("MySecretLongApiKey")
-client.UpdateRecord("demo.dev.example.org", "A", "AFFE::1")
+client.UpdateRecord("demo.dev.example.org", "A", "128.0.0.1", "127.0.0.1", 60)
 ```
 
 In this case the zoneConfigName and TTL are used from the first previous record, ttl can be specified. Value is only updated if there is more than one record or the current value differs from the new value.
