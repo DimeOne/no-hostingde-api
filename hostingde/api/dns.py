@@ -6,9 +6,11 @@ from hostingde.helpers import filters
 
 class DnsApiClient:
 
-    def __init__(self, authToken, baseUrl='https://secure.hosting.de'):
+    def __init__(self, authToken, baseUrl='https://secure.hosting.de', retryDelay=2, retries=2):
         self.__authToken = authToken
         self.__baseUrl = baseUrl
+        self.__retryDelay = retryDelay
+        self.__retries = retries
     
     # property setters
 
@@ -17,6 +19,15 @@ class DnsApiClient:
 
     def setBaseUrl(self, baseUrl):
         self.__baseUrl = baseUrl
+
+    def setApiRetryDelay(self, delay):
+        self.__retryDelay = delay
+
+    def setMaxApiRetries(self, retries):
+        self.__retries=retries
+
+    def __getApiResponse(self, path, data):
+        return getApiResponse(self.__baseUrl, path, data, self.__retries, self.__retryDelay)
 
     # hosting.de api request helper functions
 
@@ -61,39 +72,39 @@ class DnsApiClient:
     def recordsFind(self, recordFilter, limit=25, page=1, sort=None):
         """Hosting.de api function for listing records - https://www.hosting.de/api/#listing-records"""
         data = self.getCommonFilterBody(recordFilter, limit, page, sort)
-        return getApiResponse(self.__baseUrl, '/api/dns/v1/json/recordsFind', data)
+        return self.__getApiResponse('/api/dns/v1/json/recordsFind', data)
 
     def zoneConfigsFind(self, zoneConfigFilter, limit=25, page=1, sort=None):
         """Hosting.de api function for listing zone configs - https://www.hosting.de/api/#list-zoneconfigs"""
         data = self.getCommonFilterBody(zoneConfigFilter, limit, page, sort)
-        return getApiResponse(self.__baseUrl, '/api/dns/v1/json/zoneConfigsFind', data)
+        return self.__getApiResponse('/api/dns/v1/json/zoneConfigsFind', data)
 
     def zonesFind(self, zoneFilter, limit=25, page=1, sort=None):
         """Hosting.de api function for listing zones - https://www.hosting.de/api/#listing-zones"""        
         data = self.getCommonFilterBody(zoneFilter, limit, page, sort)
-        return getApiResponse(self.__baseUrl, '/api/dns/v1/json/zonesFind', data)
+        return self.__getApiResponse('/api/dns/v1/json/zonesFind', data)
 
     # hosting.de api zone editing functions
 
     def zoneCreate(self, zoneConfig, records, useDefaultNameserverSet=False, nameserverSetId=None):
         """Hosting.de api function for creating a zone - https://www.hosting.de/api/#creating-new-zones"""
         data = self.getZoneCreateBody(zoneConfig, records, useDefaultNameserverSet, nameserverSetId)
-        return getApiResponse(self.__baseUrl, '/api/dns/v1/json/zoneCreate', data)
+        return self.__getApiResponse('/api/dns/v1/json/zoneCreate', data)
 
     def zoneDelete(self, zoneConfigId=None, zoneConfigName=None):
         """Hosting.de api function for deleting a zone - https://www.hosting.de/api/#deleting-zones"""
         data = self.getZoneConfigBody(zoneConfigId, zoneConfigName)
-        return getApiResponse(self.__baseUrl, '/api/dns/v1/json/zoneRecreate', data)
+        return self.__getApiResponse('/api/dns/v1/json/zoneRecreate', data)
 
     def zoneRecreate(self, zoneConfig, records, useDefaultNameserverSet=False, nameserverSetId=None):
         """Hosting.de api function for recreating a zone - https://www.hosting.de/api/#recreating-existing-zones"""
         data = self.getZoneCreateBody(zoneConfig, records, useDefaultNameserverSet, nameserverSetId)
-        return getApiResponse(self.__baseUrl, '/api/dns/v1/json/zoneRecreate', data)
+        return self.__getApiResponse('/api/dns/v1/json/zoneRecreate', data)
 
     def zoneUpdate(self, zoneConfig, recordsToAdd, recordsToDelete=[]):  
         """Hosting.de api function for updating a zone - https://www.hosting.de/api/#updating-zones"""
         data = self.getZoneUpdateBody(zoneConfig, recordsToAdd, recordsToDelete)
-        return getApiResponse(self.__baseUrl, '/api/dns/v1/json/zoneUpdate', data)
+        return self.__getApiResponse('/api/dns/v1/json/zoneUpdate', data)
 
     # custom api functions for information gathering
 
