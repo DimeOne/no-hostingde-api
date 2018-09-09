@@ -64,9 +64,9 @@ def getBestZoneForRecord(zones, recordName, recordType=None, recordContent=None)
             if zoneContainsRecord(zone, recordName, recordType):
                 return zone
 
-    # if no exact match has been found without recordContent, iterate one last time, to check for a match based on name only
-    # to search for a match without recordContent
-    if recordContent:
+    # if no exact match has been found with recordType, iterate one last time, to check for a match based on name only
+    # to search for a match without recordType
+    if recordType:
         for zone in sortedZones:
             if zoneContainsRecord(zone, recordName):
                 return zone
