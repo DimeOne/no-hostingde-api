@@ -222,7 +222,7 @@ class DnsApiClient:
         zoneConfig, recordsToAdd, recordsToDelete = dns.getZoneUpdateFromZone(recordZone, recordName, recordType, None, recordContent)
         return self.zoneUpdate(zoneConfig, recordsToAdd, recordsToDelete)
 
-    def setZoneRecordEntry(self, zoneFilter, recordName, recordType, recordContent, oldContent=None, ttl=None):
+    def setZoneRecordEntry(self, zoneFilter, recordName, recordType, recordContent, oldContent=None, ttl=600):
         """Set records in a known zone based on a filter. Matching previous records are deleted."""
         recordZones = self.getZonesByFilter(zoneFilter)
         recordZone = dns.getBestZoneForRecord(recordZones, recordName, recordType, oldContent)        
@@ -246,13 +246,13 @@ class DnsApiClient:
         zoneConfig, recordsToAdd, recordsToDelete = dns.getZoneUpdateFromZone(recordZone, recordName, recordType, None, recordContent)
         return self.zoneUpdate(zoneConfig, recordsToAdd, recordsToDelete)
    
-    def setRecordEntry(self, recordName, recordType, recordContent, oldContent=None, ttl=None):
+    def setRecordEntry(self, recordName, recordType, recordContent, oldContent=None, ttl=600):
         """Set or create a record in an unknown zone. Matching previous records are deleted."""
         recordZone = self.getZoneByDomain(recordName, recordType, oldContent)
         zoneConfig, recordsToAdd, recordsToDelete = dns.getZoneUpdateFromZone(recordZone, recordName, recordType, recordContent, oldContent, ttl)
         return self.zoneUpdate(zoneConfig, recordsToAdd, recordsToDelete)
 
-    def updateRecordEntry(self, recordName, recordType, recordContent, oldContent=None, ttl=None):
+    def updateRecordEntry(self, recordName, recordType, recordContent, oldContent=None, ttl=600):
         """Update an existing record in an unknown zone. Matching previous records are deleted."""
         recordZone = self.getZoneByRecord(recordName, recordType, oldContent)
         zoneConfig, recordsToAdd, recordsToDelete = dns.getZoneUpdateFromZone(recordZone, recordName, recordType, recordContent, oldContent, ttl)
