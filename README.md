@@ -62,6 +62,35 @@ There are also helpers to aid with correct data structes for these functions and
 - setRecord(recordName, recordType, recordContent, oldContent=None, ttl=600)
 - updateRecord(recordName, recordType, recordContent, oldContent=None, ttl=600)
 
+
+## Examples
+
+Adding IPv4 IP:
+
+```python
+from hostingde.api.dns import DnsApiClient
+client = DnsApiClient("MySecretLongApiKey")
+client.AddRecord("dev.example.org", "demo.dev.example.org", "A", "127.0.0.1", ttl=8400)
+```
+
+Adding IPv6 IP:
+
+```python
+from hostingde.api.dns import DnsApiClient
+client = DnsApiClient("MySecretLongApiKey")
+client.AddRecord("dev.example.org", "demo.dev.example.org", "AAAA", "AFFE::1", ttl=8400)
+```
+
+Update IPv4 IP:
+
+```python
+from hostingde.api.dns import DnsApiClient
+client = DnsApiClient("MySecretLongApiKey")
+client.UpdateRecord("demo.dev.example.org", "A", "AFFE::1")
+```
+
+In this case the zoneConfigName and TTL are used from the first previous record, ttl can be specified. Value is only updated if there is more than one record or the current value differs from the new value.
+
 ## Known Issues
 
 - No warning handling from responses
@@ -84,6 +113,21 @@ pip install no-hostingde-api
 git clone https://github.com/DimeOne/no-hostingde-api.git
 cd hostingde-api
 python setup.py develop
+```
+
+or 
+
+```sh
+git clone https://github.com/DimeOne/no-hostingde-api.git
+cd hostingde-api
+pip install -e .
+```
+
+
+## Build
+
+```sh
+python setup.py sdist bdist_wheel
 ```
 
 ## References
