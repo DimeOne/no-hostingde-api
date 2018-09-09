@@ -5,6 +5,7 @@ from hostingde.helpers import filters
 
 
 class DnsApiClient:
+    """ This class is designed to allow easy interaction with the Hosting.de DNS API."""
 
     def __init__(self, authToken, baseUrl='https://secure.hosting.de', retryDelay=2, retries=2):
         self.__authToken = authToken
@@ -200,21 +201,21 @@ class DnsApiClient:
 
     # custom api functions that require more information but do not require information from  api - single api call
 
-    def addZoneRecordEntry(self, zoneConfig, recordName, recordType, recordContent, ttl=600):
+    def addZoneRecord(self, zoneConfig, recordName, recordType, recordContent, ttl=600):
         """Adds a new record to a known zone."""
         recordsToAdd = [
             dns.getRecordToAddEntry(recordName, recordType, recordContent, ttl),
         ]
         return self.zoneUpdate(zoneConfig, recordsToAdd)
 
-    def deleteZoneRecordEntry(self, zoneConfig, recordName, recordType, recordContent):
+    def deleteZoneRecord(self, zoneConfig, recordName, recordType, recordContent):
         """Delete a known record in a known zone."""
         recordToDelete = [
             dns.getRecordToDeleteEntry(recordName, recordType, recordContent)
         ]
         return self.zoneUpdate(zoneConfig, [], recordToDelete)
 
-    def updateZoneRecordEntry(self, zoneConfig, recordName, recordType, recordContent, oldContent, ttl=600):
+    def updateZoneRecord(self, zoneConfig, recordName, recordType, recordContent, oldContent, ttl=600):
         """Change a known record in a known zone."""
         recordToDelete = [
             dns.getRecordToDeleteEntry(recordName, recordType, oldContent)
@@ -226,14 +227,14 @@ class DnsApiClient:
 
     # custom api functions that require more information but still require some information from api - less zones to query and iterate
 
-    def deleteZoneRecordEntries(self, zoneFilter, recordName, recordType, recordContent=None):
+    def deleteZoneRecords(self, zoneFilter, recordName, recordType, recordContent=None):
         """Delete existing records in a known zone based on a filter."""
         recordZones = self.getZonesByFilter(zoneFilter)
         recordZone = dns.getBestZoneForRecord(recordZones, recordName, recordType, recordContent)        
         zoneConfig, recordsToAdd, recordsToDelete = dns.getZoneUpdateFromZone(recordZone, recordName, recordType, None, recordContent)
         return self.zoneUpdate(zoneConfig, recordsToAdd, recordsToDelete)
 
-    def setZoneRecordEntry(self, zoneFilter, recordName, recordType, recordContent, oldContent=None, ttl=600):
+    def setZoneRecord(self, zoneFilter, recordName, recordType, recordContent, oldContent=None, ttl=600):
         """Set records in a known zone based on a filter. Matching previous records are deleted."""
         recordZones = self.getZonesByFilter(zoneFilter)
         recordZone = dns.getBestZoneForRecord(recordZones, recordName, recordType, oldContent)        
@@ -244,26 +245,26 @@ class DnsApiClient:
     # these functions query for zone information from api
     # this can lead to performance issues with many or large zones
 
-    def addRecordEntry(self, recordName, recordType, recordContent, ttl=600):
+    def addRecord(self, recordName, recordType, recordContent, ttl=600):
         """Add a record to an unknown zone."""
         recordZone = self.getZoneByDomain(recordName, recordType)
         zoneConfig = dns.getZoneConfigFromZone(recordZone)
         recordsToAdd = [dns.getRecordToAddEntry(recordName, recordType, recordContent, ttl)]
         return self.zoneUpdate(zoneConfig, recordsToAdd)
 
-    def deleteRecordEntry(self, recordName, recordType, recordContent=None):
+    def deleteRecord(self, recordName, recordType, recordContent=None):
         """Delete existing records in an unknown zone."""
         recordZone = self.getZoneByRecord(recordName, recordType, recordContent)       
         zoneConfig, recordsToAdd, recordsToDelete = dns.getZoneUpdateFromZone(recordZone, recordName, recordType, None, recordContent)
         return self.zoneUpdate(zoneConfig, recordsToAdd, recordsToDelete)
    
-    def setRecordEntry(self, recordName, recordType, recordContent, oldContent=None, ttl=600):
+    def setRecord(self, recordName, recordType, recordContent, oldContent=None, ttl=600):
         """Set or create a record in an unknown zone. Matching previous records are deleted."""
         recordZone = self.getZoneByDomain(recordName, recordType, oldContent)
         zoneConfig, recordsToAdd, recordsToDelete = dns.getZoneUpdateFromZone(recordZone, recordName, recordType, recordContent, oldContent, ttl)
         return self.zoneUpdate(zoneConfig, recordsToAdd, recordsToDelete)
 
-    def updateRecordEntry(self, recordName, recordType, recordContent, oldContent=None, ttl=600):
+    def updateRecord(self, recordName, recordType, recordContent, oldContent=None, ttl=600):
         """Update an existing record in an unknown zone. Matching previous records are deleted."""
         recordZone = self.getZoneByRecord(recordName, recordType, oldContent)
         zoneConfig, recordsToAdd, recordsToDelete = dns.getZoneUpdateFromZone(recordZone, recordName, recordType, recordContent, oldContent, ttl)
