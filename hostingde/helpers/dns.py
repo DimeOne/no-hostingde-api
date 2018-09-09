@@ -87,7 +87,7 @@ def zoneContainsRecord(zone, recordName, recordType=None, recordContent=None):
 def getZonesOrderedByDepth(zones):
     return sorted(zones, key=lambda x: (x['zoneConfig']['nameUnicode'].count(".")), reverse=True)
 
-def getZoneUpdateFromZone(zone, recordName, recordType, recordContent, oldContent=None, ttl=None):
+def getZoneUpdateFromZone(zone, recordName, recordType, recordContent=None, oldContent=None, ttl=None):
     zoneConfig = getZoneConfigFromZone(zone)
 
     # check the zone for previous records that should be deleted
@@ -100,6 +100,8 @@ def getZoneUpdateFromZone(zone, recordName, recordType, recordContent, oldConten
     if ttl is None:
         ttl = 8400
 
-    recordsToAdd = [getRecordToAddEntry(recordName, recordType, recordContent, ttl)] 
+    recordsToAdd = []
+    if recordContent:
+        recordsToAdd = [getRecordToAddEntry(recordName, recordType, recordContent, ttl)] 
 
     return (zoneConfig, recordsToAdd, recordsToDelete)
