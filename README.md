@@ -62,7 +62,6 @@ There are also helpers to aid with correct data structes for these functions and
 - setRecord(recordName, recordType, recordContent, oldContent=None, ttl=600)
 - updateRecord(recordName, recordType, recordContent, oldContent=None, ttl=600)
 
-
 ## Examples
 
 Adding IPv4 IP:
@@ -115,14 +114,13 @@ cd hostingde-api
 python setup.py develop
 ```
 
-or 
+or
 
 ```sh
 git clone https://github.com/DimeOne/no-hostingde-api.git
 cd hostingde-api
 pip install -e .
 ```
-
 
 ## Build
 
