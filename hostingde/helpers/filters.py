@@ -1,9 +1,5 @@
-
 def getOrFilter(subFilters):
-    return {
-        'subFilterConnective': 'OR', 
-        'subFilter': subFilters
-    }
+    return {"subFilterConnective": "OR", "subFilter": subFilters}
 
 
 def getOrFilters(**kwArgs):
@@ -11,10 +7,7 @@ def getOrFilters(**kwArgs):
 
 
 def getAndFilter(subFilters):
-    return {
-        'subFilterConnective': 'AND', 
-        'subFilter': subFilters
-    }
+    return {"subFilterConnective": "AND", "subFilter": subFilters}
 
 
 def getAndFilters(**kwArgs):
@@ -30,20 +23,13 @@ def getFilters(**kwArgs):
 
 def getFilter(field, value, relation=None):
     if relation:
-        return {
-            'field': field, 
-            'value': value, 
-            'relation': relation
-        }
-    return {
-        'field': field, 
-        'value': value
-    }
+        return {"field": field, "value": value, "relation": relation}
+    return {"field": field, "value": value}
 
 
 def getRecordFilter(recordName, recordType=None, recordContent=None):
     recordFilters = [getFilter("RecordName", recordName)]
-    if recordType: 
+    if recordType:
         recordFilters.append(getFilter("RecordType", recordType))
     if recordContent:
         recordFilters.append(getFilter("RecordContent", recordContent))
