@@ -1,0 +1,6 @@
+{
+    "python.pythonPath": "${workspaceFolder}\\.pyenv\\Scripts\\python.exe",
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    "python.terminal.activateEnvironment": true
+}
