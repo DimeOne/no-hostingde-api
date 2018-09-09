@@ -201,21 +201,21 @@ class DnsApiClient:
 
     # custom api functions that require more information but do not require information from  api - single api call
 
-    def addZoneRecord(self, zoneConfig, recordName, recordType, recordContent, ttl=600):
+    def addZoneRecordWithConfig(self, zoneConfig, recordName, recordType, recordContent, ttl=600):
         """Adds a new record to a known zone."""
         recordsToAdd = [
             dns.getRecordToAddEntry(recordName, recordType, recordContent, ttl),
         ]
         return self.zoneUpdate(zoneConfig, recordsToAdd)
 
-    def deleteZoneRecord(self, zoneConfig, recordName, recordType, recordContent):
+    def deleteZoneRecordWithConfig(self, zoneConfig, recordName, recordType, recordContent):
         """Delete a known record in a known zone."""
         recordToDelete = [
             dns.getRecordToDeleteEntry(recordName, recordType, recordContent)
         ]
         return self.zoneUpdate(zoneConfig, [], recordToDelete)
 
-    def updateZoneRecord(self, zoneConfig, recordName, recordType, recordContent, oldContent, ttl=600):
+    def updateZoneRecordWithConfig(self, zoneConfig, recordName, recordType, recordContent, oldContent, ttl=600):
         """Change a known record in a known zone."""
         recordToDelete = [
             dns.getRecordToDeleteEntry(recordName, recordType, oldContent)
@@ -227,19 +227,46 @@ class DnsApiClient:
 
     # custom api functions that require more information but still require some information from api - less zones to query and iterate
 
-    def deleteZoneRecords(self, zoneFilter, recordName, recordType, recordContent=None):
+    def deleteZoneRecordsWithFilter(self, zoneFilter, recordName, recordType, recordContent=None):
         """Delete existing records in a known zone based on a filter."""
         recordZones = self.getZonesByFilter(zoneFilter)
         recordZone = dns.getBestZoneForRecord(recordZones, recordName, recordType, recordContent)        
         zoneConfig, recordsToAdd, recordsToDelete = dns.getZoneUpdateFromZone(recordZone, recordName, recordType, None, recordContent)
         return self.zoneUpdate(zoneConfig, recordsToAdd, recordsToDelete)
 
-    def setZoneRecord(self, zoneFilter, recordName, recordType, recordContent, oldContent=None, ttl=600):
+    def setZoneRecordWithFilter(self, zoneFilter, recordName, recordType, recordContent, oldContent=None, ttl=600):
         """Set records in a known zone based on a filter. Matching previous records are deleted."""
         recordZones = self.getZonesByFilter(zoneFilter)
         recordZone = dns.getBestZoneForRecord(recordZones, recordName, recordType, oldContent)        
         zoneConfig, recordsToAdd, recordsToDelete = dns.getZoneUpdateFromZone(recordZone, recordName, recordType, recordContent, oldContent, ttl)
         return self.zoneUpdate(zoneConfig, recordsToAdd, recordsToDelete)
+
+    # custom api functions with simpler interface
+
+    def addZoneRecord(self, zoneName, recordName, recordType, recordContent, ttl=600):
+        """Add a new record to a zone known by name"""
+        zoneConfig = { "name": zoneName }
+        return self.addZoneRecordWithConfig(zoneConfig, recordName, recordType, recordContent, ttl)
+
+    def deleteZoneRecord(self, zoneName, recordName, recordType, recordContent):
+        """Delete a known record from a zone known by name"""
+        zoneConfig = { "name": zoneName }
+        return self.deleteZoneRecordWithConfig(zoneConfig, recordName, recordType, recordContent)
+    
+    def updateZoneRecord(self, zoneName, recordName, recordType, recordContent, oldContent, ttl=600):
+        """Update a known record in a zone known by name"""
+        zoneConfig = { "name": zoneName }
+        return self.updateZoneRecordWithConfig(zoneConfig, recordName, recordType, recordContent, oldContent, ttl)
+
+    def deleteZoneRecords(self, zoneName, recordName, recordType, recordContent=None):
+        """Delete a record from a zone known by name - records are received from zone information queried from api"""
+        zoneFilter = filters.getFilter("ZoneName", zoneName)
+        return self.deleteZoneRecordsWithFilter(zoneFilter, recordName, recordType, recordContent)
+
+    def setZoneRecord(self, zoneName, recordName, recordType, recordContent, oldContent=None, ttl=600):
+        """Create a record from a zone known by name - old records are received from zone information queried from api and deleted"""
+        zoneFilter = filters.getFilter("ZoneName", zoneName)
+        return self.setZoneRecordWithFilter(zoneFilter, recordName, recordType, recordContent, oldContent, ttl)
 
     # custom api functions for easy use without knowning zoneConfig
     # these functions query for zone information from api
