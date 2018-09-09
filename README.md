@@ -22,30 +22,45 @@ I have only implemented functions and data structures for the DNS API.
 
 ### API functions
 
-The only API functions that I have implemented so far are:
+The Hosting.de DNS API functions that I have implemented so far are:
 
-- recordFind(filter, limit=25, page=1, sort=None) --> [listing-records]
-- zoneFind(filter, limit=25, page=1, sort=None) --> [listing-zones]
-- zoneUpdate(zoneConfig, recordsToAdd, recordsToDelete=[]) --> [updating-zones]
+- recordsFind(recordFilter, limit=25, page=1, sort=None)
+- zoneConfigsFind(zoneConfigFilter, limit=25, page=1, sort=None)
+- zonesFind(zoneFilter, limit=25, page=1, sort=None)
+- zoneCreate(zoneConfig, records, useDefaultNameserverSet=False, nameserverSetId=None)
+- zoneDelete(zoneConfigId=None, zoneConfigName=None)
+- zoneRecreate(zoneConfig, records, useDefaultNameserverSet=False, nameserverSetId=None)
+- zoneUpdate(zoneConfig, recordsToAdd, recordsToDelete=[])
 
-There are also helpers to aid with correct data structes for these functions
+There are also helpers to aid with correct data structes for these functions and helper functions, that require less information.
 
-### Custom functions
+### Custom API functions
 
-In addition to the API functions provided by hosting.de, I added some functions for common simple use cases.
-These functions are useful for operations that only affect a single hostname and record type.
+- getZonesByFilter(zoneFilter, limit=25, page=1, sort=None)
+- getZonesByRecord(recordName, recordType=None, recordContent=None, limit=25, page=1, sort=None)
+- getZonesByDomainHierarchy(recordName, limit=25, page=1, sort=None)
+- getZoneByRecord(recordName, recordType=None, recordContent=None, limit=25, page=1)
+- getZoneByDomain(recordName, recordType=None, recordContent=None, limit=25, page=1)
+- getRecordsByFilter(recordFilter, limit=50, page=1, sort=None)
+- getRecords(recordName, recordType=None, recordContent=None, limit=50, page=1, sort=None)
 
-#### Single API call
+- addZoneRecordWithConfig(zoneConfig, recordName, recordType, recordContent, ttl=600)
+- deleteZoneRecordWithConfig(zoneConfig, recordName, recordType, recordContent)
+- updateZoneRecordWithConfig(zoneConfig, recordName, recordType, recordContent, oldContent, ttl=600)
 
-- addRecord(self, zoneConfigName, recordName, recordType, value, ttl=600)
-- updateKnownRecord(self, zoneConfigName, recordName, recordType, newValue, oldValue, ttl=600)
-- getRecordsToDelete(self, recordName, recordType)
-- getRecordsToDeleteByFilter(self, filter)
+- deleteZoneRecordsWithFilter(zoneFilter, recordName, recordType, recordContent=None)
+- setZoneRecordWithFilter(zoneFilter, recordName, recordType, recordContent, oldContent=None, ttl=600)
 
-#### Multiple API calls (Lookup values first)
+- addZoneRecord(zoneName, recordName, recordType, recordContent, ttl=600)
+- deleteZoneRecord(zoneName, recordName, recordType, recordContent)
+- updateZoneRecord(zoneName, recordName, recordType, recordContent, oldContent, ttl=600)
+- deleteZoneRecords(zoneName, recordName, recordType, recordContent=None)
+- setZoneRecord(zoneName, recordName, recordType, recordContent, oldContent=None, ttl=600)
 
-- deleteRecords(self, zoneConfigName, recordName, recordType)
-- updateRecord(self, recordName, recordType, newValue, ttl=None)
+- addRecord(recordName, recordType, recordContent, ttl=600)
+- deleteRecord(recordName, recordType, recordContent=None)
+- setRecord(recordName, recordType, recordContent, oldContent=None, ttl=600)
+- updateRecord(recordName, recordType, recordContent, oldContent=None, ttl=600)
 
 ## Known Issues
 
@@ -54,7 +69,6 @@ These functions are useful for operations that only affect a single hostname and
 ## Dependencies
 
 - requests
-- urllib3
 
 ## Install
 
@@ -72,53 +86,14 @@ cd hostingde-api
 python setup.py develop
 ```
 
-## Examples
-
-Adding IPv4 IP:
-
-```python
-from hostingde.api.dns import DnsApiClient
-client = DnsApiClient("MySecretLongApiKey")
-client.AddRecord("dev.example.org", "demo.dev.example.org", "A", "127.0.0.1", ttl=8400)
-```
-
-Adding IPv6 IP:
-
-```python
-from hostingde.api.dns import DnsApiClient
-client = DnsApiClient("MySecretLongApiKey")
-client.AddRecord("dev.example.org", "demo.dev.example.org", "AAAA", "AFFE::1", ttl=8400)
-```
-
-Update IPv4 IP:
-
-```python
-from hostingde.api.dns import DnsApiClient
-client = DnsApiClient("MySecretLongApiKey")
-client.UpdateRecord("demo.dev.example.org", "A", "AFFE::1")
-```
-
-In this case the zoneConfigName and TTL are used from the first previous record, ttl can be specified. Value is only updated if there is more than one record or the current value differs from the new value.
-
-## Build
-
-```sh
-python setup.py sdist
-python setup.py bdist_wheel
-```
-
 ## References
 
 - [Github Project Page]
 - [Hosting.de Provider]
 - [Hosting.de API Reference]
-  - [listing-records]
-  - [listing-zones]
-  - [updating-zones]
+- [Hosting.de DNS API Reference]
 
 [Hosting.de Provider]: https://www.hosting.de
 [Github Project Page]: https://github.com/DimeOne/no-hostingde-api
 [Hosting.de API Reference]: https://www.hosting.de/api/
-[listing-records]: https://www.hosting.de/api/#listing-records
-[listing-zones]: https://www.hosting.de/api/#listing-zones
-[updating-zones]: https://www.hosting.de/api/#updating-zones
+[Hosting.de DNS API Reference]: https://www.hosting.de/api/#dns
