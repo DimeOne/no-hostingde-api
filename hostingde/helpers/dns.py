@@ -1,5 +1,4 @@
 
-
 def getZoneConfigFromZone(zone):
     if zone['zoneConfig']['name']:
         return { 'id': zone['zoneConfig']['name'] }
@@ -78,6 +77,9 @@ def getBestZoneForRecord(zones, recordName, recordType=None, recordContent=None)
         # return the deepest zone if none contains the given record
         return sortedZones[0]
 
+def getZonesOrderedByDepth(zones):
+    return sorted(zones, key=lambda x: (x['zoneConfig']['nameUnicode'].count(".")), reverse=True)
+
 def zoneRecordMatches(record, recordName, recordType=None, recordContent=None):
     if (record['name'].lower() == recordName.lower() 
         and (recordType is None or record['type'].lower() == recordType.lower())
@@ -97,10 +99,6 @@ def getMatchingRecordsFromZone(zone, recordName, recordType=None, recordContent=
         if zoneRecordMatches(record, recordName, recordType, recordContent):
             zoneRecords.append(record)
     return zoneRecords
-
-
-def getZonesOrderedByDepth(zones):
-    return sorted(zones, key=lambda x: (x['zoneConfig']['nameUnicode'].count(".")), reverse=True)
 
 def getZoneUpdateFromZone(zone, recordName, recordType, recordContent=None, oldContent=None, ttl=None):
     zoneConfig = getZoneConfigFromZone(zone)
