@@ -1,16 +1,15 @@
 def getZoneConfigFromZone(zone):
     if zone["zoneConfig"]["name"]:
-        return {"id": zone["zoneConfig"]["name"]}
-    return {"name": zone["zoneConfig"]["id"]}
+        return {"name": zone["zoneConfig"]["name"]}
+    return {"id": zone["zoneConfig"]["id"]}
 
 
 def getZoneConfig(name=None, id=None):
-    zoneConfig = {}
     if name:
-        zoneConfig["name"] = name
+        return {"name": name}
     if id:
-        zoneConfig["id"] = id
-    return zoneConfig
+        return {"id": id}
+    return None
 
 
 def getRecordToAddEntry(name, type, content, ttl=8600):
