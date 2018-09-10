@@ -2,7 +2,7 @@ import codecs
 import os
 from setuptools import setup
 
-version = "0.3.0.dev"
+version = "0.3.0"
 
 
 def read(filename):
@@ -32,7 +32,7 @@ setup(
     install_requires=install_requirements,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    keywords="hosting.de api client development certbot certbot-dns certbot-dns-plugin",
+    keywords="hosting.de dns api client development certbot certbot-dns certbot-dns-plugin",
     python_requires=">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, <4",
     classifiers=[
         "Programming Language :: Python",

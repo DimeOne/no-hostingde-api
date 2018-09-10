@@ -164,6 +164,7 @@ pip install no-hostingde-api
 
 ### Developer
 
+**Local install**:
 ```sh
 git clone https://github.com/DimeOne/no-hostingde-api.git
 cd hostingde-api
@@ -178,10 +179,18 @@ cd hostingde-api
 pip install -e .
 ```
 
-## Build
+**Build:**
 
 ```sh
+pip install -r dev.requirements.txt
 python setup.py sdist bdist_wheel
+```
+
+**Publish:**
+
+```sh
+pip install -r dev.requirements.txt
+twine upload dist/*
 ```
 
 ## References
