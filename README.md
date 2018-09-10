@@ -46,7 +46,9 @@ no_hostingde_api:dns_hostingde_apikey=MY_SECRET_API_KEY_FOR_HOSTING_DE
 
 This is the api key configured at [hosting.de profile] - the api key needs only the permissions to list and edit zones. ( DNS_ZONES_LIST & DNS_ZONES_EDIT )
 
-### Install
+### Install with certbot
+
+The plugin is for certbot, which is not yet python3 conpatible. Make sure to use python2.
 
 ```sh
 pip install certbot no-hostingde-api
