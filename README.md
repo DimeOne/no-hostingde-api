@@ -1,4 +1,4 @@
-# Unofficial Hosting.de API Client
+# Unofficial Hosting.de API Client and Certbot DNS Auth Plugin
 
 Python3 library for accessing the hosting.de dns api.
 
@@ -6,7 +6,7 @@ Python3 library for accessing the hosting.de dns api.
 
 ## Disclaimer
 
-This is a very basic unofficial client for the hosting.de API. I have only implemented very few functions that I need for another hobby project. I am not in any way connected to hosting.de other then being a paying customer.
+This is an unofficial client for the hosting.de API. I have only implemented very few functions that I need for another hobby project. I am not in any way connected to hosting.de other then being a paying customer.
 
 I'd be happy to give up this library for an official and supported library.
 
@@ -16,9 +16,62 @@ Validation and sanitizing of any inputs is expected to be done at higher level.
 
 **USE THIS LIBRARY AT YOUR OWN RISK, DO NOT USE IN PRODUCTION. DO NOT EXPECT SUPPORT.**
 
-## DNS
+## Features
 
-I have only implemented functions and data structures for the DNS API.
+- certbot dns authenticator plugin
+- implemented all hosting.de api zone and record functions
+- retry on busy api objects
+- custom dns api helper functions
+- dns api filter helpers
+- dns api helpers
+
+## Certbot DNS Authenticator Plugin
+
+Introduced in version 0.3.0, this certbot dns authenticator plugin allows certificates
+to be requested from letsencrypt for domains hosted by hosting.de.
+
+This allows to create certificates for hosts that may not be reachable for webroot authentication,
+or that require dns validation. e.g.: internal servers with private dns, wildcard certificates.
+
+### Configuration
+
+- credentials (path to ini file containing apikey)
+- propagation-seconds (delay between dns record creation and validation) [default: 60]
+
+**credentials.ini:**
+
+```ini credentials.ini
+no_hostingde_api:dns_hostingde_apikey=MY_SECRET_API_KEY_FOR_HOSTING_DE
+```
+
+This is the api key configured at [hosting.de profile] - the api key needs only the permissions to list and edit zones. ( DNS_ZONES_LIST & DNS_ZONES_EDIT )
+
+### Install
+
+```sh
+pip install certbot no-hostingde-api
+```
+
+### Usage
+
+After installation and creating the ini file containing the credentials,
+the following command can be used to request a certificate using this plugin.
+
+```sh
+certbot certonly \
+    -a no-hostingde-api:dns-hostingde \
+    --no-hostingde-api:dns-hostingde-credentials ~/credentials.ini \
+    --no-hostingde-api:dns-hostingde-propagation-seconds 60 \
+    -d demo.example.org
+```
+
+## DNS Api Client
+
+So far, only functions for zones, records and zoneConfigs have been implemented.
+Some functions have been implemented, to allow easier usage of the api for single records,
+that will query more or less information from the api.
+
+The DnsApiClient has a builtin retry for busy api objects, by default 2s delay and 2 retries.
 
 ### API functions
 
@@ -62,14 +115,17 @@ There are also helpers to aid with correct data structes for these functions and
 - setRecord(recordName, recordType, recordContent, oldContent=None, ttl=600)
 - updateRecord(recordName, recordType, recordContent, oldContent=None, ttl=600)
 
-## Examples
+### Examples
 
 Adding IPv4 IP:
 
 ```python
 from hostingde.api.dns import DnsApiClient
 client = DnsApiClient("MySecretLongApiKey")
-client.AddRecord("dev.example.org", "demo.dev.example.org", "A", "127.0.0.1", ttl=8400)
+# only 1 api call because we know the zone name:
+client.AddZoneRecord("dev.example.org", "demo.dev.example.org", "A", "127.0.0.1", ttl=8400)
+# alternative for unknown zone - requires 2 api calls, because we need to find the zone first - expensive!
+client.AddRecord("demo.dev.example.org", "A", "127.0.0.1", ttl=8400)
 ```
 
 Adding IPv6 IP:
@@ -77,7 +133,7 @@ Adding IPv6 IP:
 ```python
 from hostingde.api.dns import DnsApiClient
 client = DnsApiClient("MySecretLongApiKey")
-client.AddRecord("dev.example.org", "demo.dev.example.org", "AAAA", "AFFE::1", ttl=8400)
+client.AddZoneRecord("dev.example.org", "demo.dev.example.org", "AAAA", "AFFE::1", ttl=8400)
 ```
 
 Update IPv4 IP:
@@ -132,10 +188,12 @@ python setup.py sdist bdist_wheel
 
 - [Github Project Page]
 - [Hosting.de Provider]
+- [Hosting.de Profile]
 - [Hosting.de API Reference]
 - [Hosting.de DNS API Reference]
 
 [Hosting.de Provider]: https://www.hosting.de
+[Hosting.de Profile]: https://secure.hosting.de/profile
 [Github Project Page]: https://github.com/DimeOne/no-hostingde-api
 [Hosting.de API Reference]: https://www.hosting.de/api/
 [Hosting.de DNS API Reference]: https://www.hosting.de/api/#dns
