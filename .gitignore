@@ -107,4 +107,5 @@ testing/
 snippets/
 .local/
 .pyenv/
+.pyenv*/
 *.env
