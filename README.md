@@ -48,7 +48,7 @@ This is the api key configured at [hosting.de profile] - the api key needs only 
 
 ### Install with certbot
 
-The plugin is for certbot, which is not yet python3 conpatible. Make sure to use python2.
+The plugin is for certbot, which is not yet python3 compatible. Make sure to use python2.
 
 ```sh
 pip install certbot no-hostingde-api
