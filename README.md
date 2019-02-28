@@ -195,6 +195,10 @@ pip install -r dev.requirements.txt
 twine upload dist/*
 ```
 
+## Changelog
+
+- 0.3.1: Fix for api zoneConfig changes.
+
 ## References
 
 - [Github Project Page]
