@@ -349,13 +349,12 @@ class DnsApiClient:
     # this can lead to performance issues with many or large zones
 
     def addRecord(self, recordName, recordType, recordContent, ttl=600):
-        """Add a record to an unknown zone."""
+        """Add a record to an unknown, but existing zone."""
         recordZone = self.getZoneByDomain(recordName, recordType)
-        zoneConfig = dns.getZoneConfigFromZone(recordZone)
         recordsToAdd = [
             dns.getRecordToAddEntry(recordName, recordType, recordContent, ttl)
         ]
-        return self.zoneUpdate(zoneConfig, recordsToAdd)
+        return self.zoneUpdate(recordZone["zoneConfig"], recordsToAdd)
 
     def deleteRecord(self, recordName, recordType, recordContent=None):
         """Delete existing records in an unknown zone."""

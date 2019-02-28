@@ -1,9 +1,3 @@
-def getZoneConfigFromZone(zone):
-    if zone["zoneConfig"]["name"]:
-        return {"name": zone["zoneConfig"]["name"]}
-    return {"id": zone["zoneConfig"]["id"]}
-
-
 def getZoneConfig(name=None, id=None):
     if name:
         return {"name": name}
@@ -110,7 +104,7 @@ def getMatchingRecordsFromZone(zone, recordName, recordType=None, recordContent=
 def getZoneUpdateFromZone(
     zone, recordName, recordType, recordContent=None, oldContent=None, ttl=None
 ):
-    zoneConfig = getZoneConfigFromZone(zone)
+    zoneConfig = zone["zoneConfig"]
 
     # check the zone for previous records that should be deleted
     previousRecords = getMatchingRecordsFromZone(
