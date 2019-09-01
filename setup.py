@@ -24,6 +24,7 @@ setup(
     packages=[
         "hostingde",
         "hostingde.api",
+        "hostingde.api.clients",
         "hostingde.helpers",
         "hostingde.plugins",
         "hostingde.plugins.certbot",
