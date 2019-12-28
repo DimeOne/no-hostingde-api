@@ -2,11 +2,12 @@ version: '3'
 services:
 
   certbot:
-    image: dime/certbot
+    build: .
     environment:
       - TZ=Europe/Berlin
     volumes:
       - certs:/etc/letsencrypt
+      - var:/var/lib/letsencrypt
       - www:/var/www/.well-known
       - secrets:/run/secrets/hosting.de
 
@@ -14,3 +15,4 @@ volumes:
   certs:
   www:
   secrets:
+  var:
