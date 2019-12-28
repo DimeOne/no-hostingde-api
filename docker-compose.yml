@@ -2,7 +2,7 @@ version: '3'
 services:
 
   certbot:
-    build: .
+    build: ./src
     environment:
       - TZ=Europe/Berlin
     volumes:
